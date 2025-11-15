@@ -18,7 +18,7 @@ function App() {
     <div className="app">
       {!hideHeader && (
         <header>
-          <h1>🏥 VitalLink</h1>
+          <h1>VitalLink</h1>
           <nav>
             <Link to="/">Home</Link>
             <Link to="/login">Login</Link>

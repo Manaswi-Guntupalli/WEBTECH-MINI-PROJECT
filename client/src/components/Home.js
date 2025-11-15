@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div>
       <div className="hero">
-        <h1>🏥 VitalLink</h1>
+        <h1>VitalLink</h1>
         <p>Your Health, Our Priority - Manage Your Medical Journey Seamlessly</p>
         <div className="hero-buttons">
           <Link to="/login">

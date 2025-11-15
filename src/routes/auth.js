@@ -9,12 +9,24 @@ const User = require('../models/User');
 
 // Register
 router.post('/register', async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, specialization } = req.body;
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: 'User already exists' });
 
-    user = new User({ name, email, password, role: role || 'patient' });
+    const userData = { 
+      name, 
+      email, 
+      password, 
+      role: role || 'patient'
+    };
+    
+    // Only add specialization if role is doctor and specialization is provided
+    if (role === 'doctor' && specialization) {
+      userData.specialization = specialization;
+    }
+
+    user = new User(userData);
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
     await user.save();
@@ -22,7 +34,7 @@ router.post('/register', async (req, res) => {
     const payload = { user: { id: user.id } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '12h' }, (err, token) => {
       if (err) throw err;
-      res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+      res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, specialization: user.specialization } });
     });
   } catch (err) {
     console.error(err.message);

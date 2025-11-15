@@ -7,8 +7,10 @@ const AppointmentSchema = new mongoose.Schema({
   doctorName: { type: String, required: true },
   doctorEmail: { type: String },
   date: { type: Date, required: true },
+  time: { type: String, required: true }, // e.g., "14:30"
   reason: { type: String },
   status: { type: String, default: 'scheduled' },
+  prescriptionAdded: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 });
 

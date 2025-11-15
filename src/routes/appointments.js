@@ -7,7 +7,7 @@ const User = require('../models/User');
 // Create appointment
 router.post('/', auth, async (req, res) => {
   try {
-    const { doctorName, doctorEmail, date, reason } = req.body;
+    const { doctorName, doctorEmail, date, time, reason } = req.body;
     
     // Get patient info
     const patient = await User.findById(req.user.id);
@@ -18,7 +18,8 @@ router.post('/', auth, async (req, res) => {
       patientEmail: patient.email,
       doctorName, 
       doctorEmail,
-      date, 
+      date,
+      time,
       reason 
     });
     await appt.save();
@@ -49,7 +50,32 @@ router.get('/doctor', auth, async (req, res) => {
     }
     
     const appts = await Appointment.find({ doctorEmail: doctor.email }).sort({ date: 1 });
-    res.json(appts);
+    
+    // Add status based on current time
+    const now = new Date();
+    const appointmentsWithStatus = appts.map(appt => {
+      const apptObj = appt.toObject();
+      
+      // Combine date and time to check if appointment time has passed
+      const appointmentDate = new Date(appt.date);
+      if (appt.time) {
+        const [hours, minutes] = appt.time.split(':');
+        appointmentDate.setHours(parseInt(hours), parseInt(minutes), 0);
+      }
+      
+      // Determine status
+      if (appt.prescriptionAdded) {
+        apptObj.timeStatus = 'completed';
+      } else if (appointmentDate <= now) {
+        apptObj.timeStatus = 'active'; // Time has passed, can add prescription
+      } else {
+        apptObj.timeStatus = 'future'; // Future appointment, locked
+      }
+      
+      return apptObj;
+    });
+    
+    res.json(appointmentsWithStatus);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

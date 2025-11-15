@@ -6,6 +6,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('patient');
+  const [specialization, setSpecialization] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -16,7 +17,7 @@ export default function Register() {
       const res = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, role })
+        body: JSON.stringify({ name, email, password, role, specialization: role === 'doctor' ? specialization : undefined })
       });
       
       if (!res.ok) {
@@ -85,6 +86,30 @@ export default function Register() {
               <option value="doctor">Doctor</option>
             </select>
           </div>
+          {role === 'doctor' && (
+            <div className="form-row">
+              <label style={{ color: 'white' }}>Specialization</label>
+              <select 
+                value={specialization} 
+                onChange={e => setSpecialization(e.target.value)}
+                required
+              >
+                <option value="">-- Select Specialization --</option>
+                <option value="General Physician">General Physician</option>
+                <option value="Cardiologist">Cardiologist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="Orthopedic">Orthopedic</option>
+                <option value="Neurologist">Neurologist</option>
+                <option value="Gynecologist">Gynecologist</option>
+                <option value="Psychiatrist">Psychiatrist</option>
+                <option value="Ophthalmologist">Ophthalmologist</option>
+                <option value="ENT Specialist">ENT Specialist</option>
+                <option value="Dentist">Dentist</option>
+                <option value="Urologist">Urologist</option>
+              </select>
+            </div>
+          )}
           {error && (
             <div style={{ 
               color: '#ff6b6b', 
