@@ -1,0 +1,10 @@
+# dependencies
+node_modules/
+client/node_modules/
+
+# environment files
+.env
+
+# generated uploads (keep folder, ignore contents)
+uploads/*
+!uploads/.gitkeep
